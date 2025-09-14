@@ -1,0 +1,30 @@
+# Django #
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+media/
+staticfiles/
+
+# If you collect static files
+/static/
+
+# VS Code #
+.vscode/
+
+# Environment #
+.env
+*.env
+*.venv
+venv/
+ENV/
+env/
+
+# OS files #
+.DS_Store
+Thumbs.db
+
+# Node (if you use Chart.js via npm) #
+node_modules/
+package-lock.json
