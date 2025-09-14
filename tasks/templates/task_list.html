@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <!-- Bootstrap CSS for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #198754;
+        }
+
+        .task-card {
+            transition: all 0.3s ease;
+        }
+
+        .task-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .completed-task {
+            text-decoration: line-through;
+            color: gray;
+        }
+
+        .chart-container {
+            width: 300px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>To-Do List</h1>
+
+    <!-- Progress Chart -->
+    <div class="chart-container mb-4">
+        <canvas id="progressChart"></canvas>
+    </div>
+
+    <!-- Tasks -->
+    <div class="row">
+        {% for task in tasks %}
+        <div class="col-md-4 mb-3">
+            <div class="card task-card {% if task.status %}completed-task{% endif %}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ task.title }}</h5>
+                    <p class="card-text">{{ task.description }}</p>
+                    <p class="card-text"><strong>Deadline:</strong> {{ task.deadline }}</p>
+                    <p class="card-text"><strong>Priority:</strong> {{ task.priority }}</p>
+                    <p class="card-text"><strong>Status:</strong> {% if task.status %}Completed{% else %}Pending{% endif %}</p>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No tasks yet.</p>
+        {% endfor %}
+    </div>
+</div>
+<script id="task-data" type="application/json">
+    {
+        "completed": {{ completed|default:0 }},
+        "pending": {{ pending|default:0 }}
+    }
+</script>
+
+<script>
+    // Parse JSON safely
+    const taskData = JSON.parse(document.getElementById('task-data').textContent);
+    const completed = taskData.completed;
+    const pending = taskData.pending;
+
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Completed', 'Pending'],
+            datasets: [{
+                label: 'Task Progress',
+                data: [completed, pending],
+                backgroundColor: ['#198754', '#6c757d'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.label + ': ' + context.raw + ' task(s)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+
+</body>
+</html>
